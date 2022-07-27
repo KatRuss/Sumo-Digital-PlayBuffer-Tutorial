@@ -265,12 +265,12 @@ void UpdateDestroyed() {
 void UpdateAgent8() {
 	GameObject& obj_agent8 = Play::GetGameObjectByType(TYPE_AGENT8);
 
-	switch (gameState.agentState)
-	{
+		switch (gameState.agentState)
+		{
 		case STATE_APPEAR:
 			obj_agent8.velocity = { 0,12 };
 			obj_agent8.acceleration = { 0,0.5f };
-			Play::SetSprite(obj_agent8,"agent8_fall",0);
+			Play::SetSprite(obj_agent8, "agent8_fall", 0);
 			obj_agent8.rotation = 0;
 			if (obj_agent8.pos.y >= DISPLAY_HEIGHT / 3)
 			{
@@ -283,7 +283,7 @@ void UpdateAgent8() {
 			{
 				gameState.agentState = STATE_PLAY;
 			}
-			break;		
+			break;
 		case STATE_PLAY:
 			HandlePlayerControls();
 			break;
@@ -305,22 +305,20 @@ void UpdateAgent8() {
 				}
 			}
 			break;
+		}
+		Play::UpdateGameObject(obj_agent8);
 
-			Play::UpdateGameObject(obj_agent8);
-			
-			if (Play::IsLeavingDisplayArea(obj_agent8))
-			{
-				obj_agent8.pos = obj_agent8.oldPos;
-			}
+		if (Play::IsLeavingDisplayArea(obj_agent8))
+		{
+			obj_agent8.pos = obj_agent8.oldPos;
+		}
 
-			Play::DrawLine({ obj_agent8.pos.x,0 }, obj_agent8.pos, Play::cWhite);
-			Play::DrawObjectRotated(obj_agent8);
+		Play::DrawLine({ obj_agent8.pos.x,0 }, obj_agent8.pos, Play::cWhite);
+		Play::DrawObjectRotated(obj_agent8);
 
 
 	}
 
-
-}
 
 //---------------Game Loop--------------------
 // The entry point for a PlayBuffer program
@@ -329,7 +327,7 @@ void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
 	Play::CreateManager( DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_SCALE );
 	Play::CentreAllSpriteOrigins();
 	Play::LoadBackground(background);
-	//Play::StartAudioLoop(music);
+	Play::StartAudioLoop(music);
 	Play::CreateGameObject(TYPE_AGENT8, { 115,0 }, 50, "agent8");
 	int id_fan = Play::CreateGameObject(TYPE_FAN, { 1140,217 }, 0, "fan");
 	Play::GetGameObject(id_fan).velocity = { 0,3 };
@@ -339,12 +337,15 @@ void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
 // Called by PlayBuffer every frame (60 times a second!)
 bool MainGameUpdate( float elapsedTime )
 {
-	Play::ClearDrawingBuffer( Play::cOrange ); //Start of graphics buffer for a given frame 
+	//Play::ClearDrawingBuffer( Play::cOrange ); //Start of graphics buffer for a given frame 
 	Play::DrawBackground();
 	UpdateFan();
 	UpdateTools();
 	UpdateLasers();
 	UpdateDestroyed();
+
+	Play::DrawFontText("64px", "Arrow Keys to Move Up and Down. Space to Fire", { DISPLAY_WIDTH / 2, DISPLAY_HEIGHT - 30 }, Play::CENTRE);
+	Play::DrawFontText("132px", "SCORE: " + std::to_string(gameState.score), {DISPLAY_WIDTH / 2, 50}, Play::CENTRE);
 	UpdateCoinsAndStars();
 	UpdateAgent8();
 	Play::PresentDrawingBuffer(); //End of Graphics buffer for a given frame
